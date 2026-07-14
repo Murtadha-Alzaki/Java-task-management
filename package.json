@@ -1,0 +1,28 @@
+{
+  "name": "taskify",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Murtadha-Alzaki/Java-task-management#readme",
+  "bugs": {
+    "url": "https://github.com/Murtadha-Alzaki/Java-task-management/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Murtadha-Alzaki/Java-task-management.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "clean-api": "rimraf ./frontend/src/generated-api-types",
+    "generate-api": "npm run clean-api && openapi-generator-cli generate -i openapi/openapi.yaml -g typescript-axios -o ./frontend/src/generated-api-types",
+    "dev-backend": "if not defined DB_URL set \"DB_URL=jdbc:postgresql://localhost:5432/ai_workspace\" && if not defined DB_USERNAME set \"DB_USERNAME=postgres\" && if not defined DB_PASSWORD set \"DB_PASSWORD=postgres\" && if not defined APP_JWT_ACCESS_SECRET set \"APP_JWT_ACCESS_SECRET=dev-only-access-secret-change-me-at-least-32-bytes\" && if not defined APP_JWT_ACCESS_TTL set \"APP_JWT_ACCESS_TTL=PT15M\" && if not defined APP_AUTH_COOKIE_SECURE set \"APP_AUTH_COOKIE_SECURE=false\" && backend\\mvnw.cmd -f backend\\pom.xml spring-boot:run"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.20.2"
+  },
+  "dependencies": {
+    "rimraf": "^6.1.3"
+  }
+}

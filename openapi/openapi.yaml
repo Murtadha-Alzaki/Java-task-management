@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  title: Taskify APIs
+  version: 1.0.0
+
+tags:
+  - name: Auth
+    description: Endpoints for authentication
+
+
+security:
+  - cookieAuth: []
+
+paths:
+  /auth/signup:
+    post:
+      operationId: signup
+      tags:
+        - Auth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailAndPassword"
+      responses:
+        "200":
+          description: Signup successful;
+          headers:
+            Set-Cookie:
+              description: access-token cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCodeResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags:
+        - Auth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailAndPassword"
+      responses:
+        "200":
+          description: Login successful;
+          headers:
+            Set-Cookie:
+              description: access-token cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCodeResponse"
+        "401":
+          description: Wrong password or unknown email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCodeResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: The authenticated caller's session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "401":
+          description: (UNAUTHORIZED)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCodeResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags:
+        - Auth
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        "200":
+          description: Successfully logged out
+          headers:
+            Set-Cookie:
+              description: Expired access-token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Missing or invalid authentication
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCodeResponse"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-XSRF-TOKEN
+
+  schemas:
+    ErrorCode:
+      type: string
+      enum:
+        - INVALID_REQUEST
+        - USER_WITH_THIS_EMAIL_ALREADY_EXISTS
+        - INVALID_EMAIL_OR_PASSWORD
+        - UNEXPECTED_ERROR
+    
+    ErrorCodeResponse:
+      type: object
+      properties:
+        message:
+          $ref: "#/components/schemas/ErrorCode"
+      required: [message]
+
+    EmailAndPassword:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required: [email, password]
+
+    SessionResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        email:
+          type: string
+      required: [userId, email ]
